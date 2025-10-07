@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Tambahkan efek hover dan striping */
+.filament-tables-table tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+.filament-tables-table tbody tr:hover {
+    background-color: #eef2ff;
+}

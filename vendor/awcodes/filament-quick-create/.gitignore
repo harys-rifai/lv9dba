@@ -1,0 +1,6 @@
+/node_modules
+/vendor
+/.npmrc
+/.idea
+/images
+composer.lock

@@ -1,0 +1,73 @@
+{
+    "name": "marjose123/filament-lockscreen",
+    "description": "This is my package filament-lockscreen",
+    "type": "library",
+    "keywords": [
+        "MarJose123",
+        "laravel",
+        "filament-lockscreen"
+    ],
+    "homepage": "https://github.com/marjose123/filament-lockscreen",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marjose",
+            "email": "hypernate1@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1|^8.0",
+        "danharrin/livewire-rate-limiting": "^1.0",
+        "filament/filament": "^2.0",
+        "filament/notifications": "^2.0",
+        "illuminate/contracts": "^8.0|^9.0|^10.0",
+        "phpsa/filament-password-reveal": "^1.1",
+        "spatie/laravel-package-tools": "^1.13.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^6.0",
+        "orchestra/testbench": "^7.0",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-laravel": "^1.1",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "lockscreen\\FilamentLockscreen\\": "src",
+            "lockscreen\\FilamentLockscreen\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "lockscreen\\FilamentLockscreen\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "pestphp/pest-plugin": false
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "lockscreen\\FilamentLockscreen\\FilamentLockscreenServiceProvider"
+            ],
+            "aliases": {
+                "FilamentLockscreen": "lockscreen\\FilamentLockscreen\\Facades\\FilamentLockscreen"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
