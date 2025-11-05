@@ -33,7 +33,7 @@ class UatmetricResource extends Resource
             Forms\Components\TextInput::make('DiskDataAvg')->numeric()->required(),
             Forms\Components\TextInput::make('ServerStatus')->required(),
             Forms\Components\TextInput::make('LongQueryCount')->numeric()->required(),
-            Forms\Components\TextInput::make('IdleInQ')->numeric()->required(),
+            Forms\Components\TextInput::make('idleinQ')->numeric()->required(),
             Forms\Components\TextInput::make('LockingCount')->numeric()->required(),
             Forms\Components\TextInput::make('PostgresVersion')->required(),
             Forms\Components\TextInput::make('flag'),
@@ -58,7 +58,7 @@ class UatmetricResource extends Resource
                 Tables\Columns\TextColumn::make('DiskDataAvg')->size('sm')->sortable()->searchable()->label('disk'),
                 Tables\Columns\TextColumn::make('ServerStatus')->size('sm')->sortable()->searchable()->label('status'),
                 Tables\Columns\TextColumn::make('LongQueryCount')->size('sm')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('IdleInQ')->size('sm')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('idleinQ')->size('sm')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('LockingCount')->size('sm')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('PostgresVersion')->size('sm')->sortable()->searchable()->label('PGV')->color('success'),
             ])

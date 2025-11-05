@@ -17,6 +17,10 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+
 
 class HighUsageMetricResource extends Resource
 {
@@ -164,9 +168,44 @@ TextColumn::make('environment')
                         }
                     }),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            
+->bulkActions([
+    BulkAction::make('Export to CSV')
+        ->label('Export to CSV')
+        ->icon('heroicon-o-arrow-down') 
+        ->action(function (Collection $records): StreamedResponse {
+            $filename = 'high_usage_metrics'.now()->format('Y-m-d_H-i-s') . '.csv';
+
+            return response()->streamDownload(function () use ($records) {
+                $handle = fopen('php://output', 'w');
+
+                // Header CSV
+                fputcsv($handle, ['Timestamp', 'Hostname', 'Environment', 'CPU Usage', 'Memory Usage', 'Status']);
+
+                // Isi data
+                foreach ($records as $record) {
+                    $cpu = floatval(str_replace('%', '', $record->cpu_usage));
+                    $ram = null;
+                    if (preg_match('/\((.*?)%\)/', $record->memory_usage, $matches)) {
+                        $ram = floatval($matches[1]);
+                    }
+
+                    fputcsv($handle, [
+                        $record->timestamp,
+                        $record->hostname,
+                        $record->environment,
+                        $cpu,
+                        $ram,
+                        $record->status,
+                    ]);
+                }
+
+                fclose($handle);
+            }, $filename);
+        })
+        ->deselectRecordsAfterCompletion()
+        ->requiresConfirmation(),
+]);
     }
 
     public static function getEloquentQuery(): Builder

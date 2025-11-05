@@ -11,7 +11,7 @@ class Uatmetric extends Model
     protected $fillable = [
         'timestamp', 'Hostname', 'IP_Address', 'Database', 'CPU', 'Memory',
         'DiskVolGroupAvg', 'DiskDataAvg', 'ServerStatus', 'LongQueryCount',
-        'IdleInQ', 'LockingCount', 'PostgresVersion', 'flag', 'state'
+        'idleinQ', 'LockingCount', 'PostgresVersion', 'flag', 'state'
     ];
 
     public $timestamps = true;

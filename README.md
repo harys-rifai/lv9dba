@@ -16,7 +16,7 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.com/harysrifai-dev/git-app_prod_dba.git
+git remote add origin https://github.com/CahyaIbrahim/pru-coded.git
 git branch -M main
 git push -uf origin main
 ## Integrate with your tools

@@ -10,6 +10,9 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FilteredMetricResource extends Resource
 {
@@ -62,28 +65,64 @@ class FilteredMetricResource extends Resource
                         'success' => fn ($state) => preg_match('/\((.*?)%\)/', $state, $m) && floatval($m[1]) <= 75,
                     ]),
 
-                
-
                 Tables\Columns\IconColumn::make('status')
-                            ->label('Status')
-                            ->boolean()
-                            ->trueIcon('heroicon-o-check-circle')
-                            ->falseIcon('heroicon-o-x-circle')
-                            ->colors([
-                                'danger' => 'critical',
-                                'warning' => 'fail',
-                                'success' => 'accepting',
-                                'gray' => fn ($state) => !in_array(strtolower($state), ['down', 'warning', 'issue']),
-                            ])
-                            ->size('sm')
-                            ->disableClick(),
+                    ->label('Status')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->colors([
+                        'danger' => 'critical',
+                        'warning' => 'fail',
+                        'success' => 'accepting',
+                        'gray' => fn ($state) => !in_array(strtolower($state), ['down', 'warning', 'issue']),
+                    ])
+                    ->size('sm')
+                    ->disableClick(),
 
                 TextColumn::make('created_at')
                     ->label('Saved At')->size('sm')
                     ->searchable()
                     ->color('gray'),
             ])
-            ->defaultSort('timestamp', 'desc');
+            ->defaultSort('timestamp', 'desc')
+            ->bulkActions([
+                BulkAction::make('exportCsv')
+                    ->label('Export to CSV')
+                    ->icon('heroicon-o-arrow-down')
+                    ->action(function (Collection $records): StreamedResponse {
+                        $filename = 'filtered_metrics_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+                        return response()->streamDownload(function () use ($records) {
+                            $handle = fopen('php://output', 'w');
+
+                            // Header CSV
+                            fputcsv($handle, ['Timestamp', 'Hostname', 'Environment', 'CPU Usage (%)', 'Memory Usage (%)', 'Status']);
+
+                            // Isi data
+                            foreach ($records as $record) {
+                                $cpu = floatval(str_replace('%', '', $record->cpu_usage));
+
+                                $ram = null;
+                                if (preg_match('/\((.*?)%\)/', $record->memory_usage, $matches)) {
+                                    $ram = floatval($matches[1]);
+                                }
+
+                                fputcsv($handle, [
+                                    $record->timestamp,
+                                    $record->hostname,
+                                    $record->environment,
+                                    $cpu,
+                                    $ram,
+                                    $record->status,
+                                ]);
+                            }
+
+                            fclose($handle);
+                        }, $filename);
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->requiresConfirmation(),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

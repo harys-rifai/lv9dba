@@ -32,6 +32,6 @@ class SystemMetric extends Model
         'extra2',
         'file_name',
         'load_status',
-        'pgver',
+        'pgver','ip_address',
     ];
 }

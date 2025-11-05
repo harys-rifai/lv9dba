@@ -14,7 +14,7 @@ class FilteredMetric extends Model
         'environment',
         'cpu_usage',
         'memory_usage',
-        'status',
+        'status','ip_address',
     ];
 
     public static array $hostnameColors = [
