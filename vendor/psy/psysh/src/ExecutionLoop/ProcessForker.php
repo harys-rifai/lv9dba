@@ -177,12 +177,14 @@ class ProcessForker extends AbstractListener
 
                 if ($n === false) {
                     $err = \error_get_last();
-                    if (!isset($err['message']) || \stripos($err['message'], 'interrupted system call') === false) {
-                        $msg = $err['message'] ?
-                            \sprintf('Error waiting for execution loop: %s', $err['message']) :
-                            'Error waiting for execution loop';
-                        throw new \RuntimeException($msg);
+                    $errMessage = \is_array($err) ? ($err['message'] ?? null) : null;
+
+                    // If there's no error message, or it's an interrupted system call, just retry
+                    if ($errMessage === null || \stripos($errMessage, 'interrupted system call') !== false) {
+                        continue;
                     }
+
+                    throw new \RuntimeException(\sprintf('Error waiting for execution loop: %s', $errMessage));
                 }
             } while ($n < 1);
 
@@ -333,6 +335,7 @@ class ProcessForker extends AbstractListener
             }
 
             // worker didn't exit cleanly, we'll need to have another go
+            // @phan-suppress-next-line PhanPossiblyInfiniteRecursionSameParams - recursion exits via posix_kill above
             $this->createSavegame();
         }
     }
@@ -387,7 +390,7 @@ class ProcessForker extends AbstractListener
                 continue;
             }
 
-            if (\version_compare(\PHP_VERSION, '8.1', '>=') && $value instanceof \UnitEnum) {
+            if (\PHP_VERSION_ID >= 80100 && $value instanceof \UnitEnum) {
                 // Enums defined in the REPL session can't be unserialized.
                 $ref = new \ReflectionObject($value);
                 if (\strpos($ref->getFileName(), ": eval()'d code") !== false) {

@@ -4,6 +4,7 @@ namespace Laravel\Socialite;
 
 use Illuminate\Support\Facades\Facade;
 use Laravel\Socialite\Contracts\Factory;
+use Laravel\Socialite\Testing\SocialiteFake;
 
 /**
  * @method static \Laravel\Socialite\Contracts\Provider driver(string $driver = null)
@@ -26,5 +27,27 @@ class Socialite extends Facade
     protected static function getFacadeAccessor()
     {
         return Factory::class;
+    }
+
+    /**
+     * Register a fake Socialite instance.
+     *
+     * @param  string  $driver
+     * @param  \Laravel\Socialite\Contracts\User|\Closure|array|null  $user
+     * @return \Laravel\Socialite\Testing\SocialiteFake
+     */
+    public static function fake(string $driver, $user = null)
+    {
+        $root = static::getFacadeRoot();
+
+        if ($root instanceof SocialiteFake) {
+            $fake = $root;
+        } else {
+            $fake = new SocialiteFake($root);
+
+            static::swap($fake);
+        }
+
+        return $fake->fake($driver, $user);
     }
 }
