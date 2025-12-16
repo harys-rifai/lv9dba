@@ -1,20 +1,16 @@
 /*
  Navicat Premium Dump SQL
-
  Source Server         : 10.170.49.136-mis_user
  Source Server Type    : PostgreSQL
  Source Server Version : 170005 (170005)
  Source Host           : 10.170.49.136:5432
  Source Catalog        : dba_user
  Source Schema         : public
-
  Target Server Type    : PostgreSQL
  Target Server Version : 170005 (170005)
  File Encoding         : 65001
-
  Date: 21/08/2025 21:31:46
 */
-
 
 -- ----------------------------
 -- Type structure for dblink_pkey_results
